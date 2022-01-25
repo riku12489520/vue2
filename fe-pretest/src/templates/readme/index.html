@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>README</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/4.0.0/github-markdown.min.css"
+      integrity="sha512-Oy18vBnbSJkXTndr2n6lDMO5NN31UljR8e/ICzVPrGpSud4Gkckb8yUpqhKuUNoE+o9gAb4O/rAxxw1ojyUVzg=="
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/4.0.0/github-markdown.css"
+      integrity="sha512-j84w/URwwK++Im1eDnefcHbtMSYWbwaLmJqcj58tDiZtjfPFPHEzxcnyOpqfGhTgxd/6xL2J9rmF987W64S8Tw=="
+      crossorigin="anonymous"
+    />
+  </head>
+  <style>
+    body {
+      padding: 1.25em;
+      max-width: 768px;
+      margin: 0 auto;
+    }
+  </style>
+  <body class="markdown-body">
+    <h1 class="code-line" data-line-start="0" data-line-end="1">
+      <a id="_0"></a>前端試題
+    </h1>
+
+    <div style="padding-top: 1em;"></div>
+    <h2 class="code-line" data-line-start="2" data-line-end="3">
+      <a id="manual"></a>說明
+    </h2>
+    <ul style="list-style: circle;">
+      <li>有任何問題或需求請務必讓我們知道</li>
+      <li>
+        我們提供兩種 React 及 Vue 框架讓你選擇使用，<br />請在開始前告訴我們你需要使用的框架讓我們協助設定。
+      </li>
+      <li>
+        測驗內容分為 <a href="#UI_UX">UI/UX</a> 以及
+        <a href="#RestfulAPI">Restful API</a> 連接。<br />
+      </li>
+      <li>如果需要提前結束請告訴我們</li>
+    </ul>
+
+    <div style="padding-top: 2em;"></div>
+
+    <h2 class="code-line" data-line-start="2" data-line-end="3">
+      <a id="UI_UX"></a>UI / UX
+    </h2>
+    <ul style="list-style: circle;">
+      <li class="has-line-data" data-line-start="3" data-line-end="4">
+        我們提供 React 以及 Vue 的前端框架讓你使用，使用方式請參照
+        <a href="#reference">參考資料</a>
+      </li>
+      <li class="has-line-data" data-line-start="3" data-line-end="4">
+        設計儀表板畫面，尺寸最大為 <code>1024 x 768</code>
+      </li>
+      <li class="has-line-data" data-line-start="5" data-line-end="5">
+        請考慮到使用者的閱讀性，根據設定檔的需求顯示使用者需要得到的資訊
+      </li>
+      <li class="has-line-data" data-line-start="3" data-line-end="4">
+        如果時間允許請考慮 RWD
+      </li>
+      <br /><br />
+      配置圖如下
+      <img
+        src="data:image/png;base64,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"
+      />
+    </ul>
+    <blockquote>
+      <p class="has-line-data" data-line-start="6" data-line-end="8"></p>
+    </blockquote>
+
+    <div style="padding-top: 2em;"></div>
+
+    <h2 class="code-line" data-line-start="9" data-line-end="10">
+      <a id="RestfulAPI"></a>資料更新
+    </h2>
+    <ul style="list-style: circle;">
+      <li class="has-line-data" data-line-start="3" data-line-end="4">
+        我們提供 HTTP 請求插件 Axios 讓你使用，使用方式請參照
+        <a href="#reference">參考資料</a>
+      </li>
+      <li class="has-line-data" data-line-start="10" data-line-end="11">
+        請使用設定檔的 <code>pcm_id</code>、<code>devid</code> 放進 Request
+        Payload，並以<code>POST</code>的方式分批至 API 換取資料
+      </li>
+      <li class="has-line-data" data-line-start="11" data-line-end="12">
+        每 5 秒擷取新資料
+      </li>
+      <!-- <li class="has-line-data" data-line-start="12" data-line-end="17">
+        請在每個請求中的 HEADER 中添加 <code>AUTHORIZATION</code> 值為
+        <pre><code class="has-line-data" data-line-start="14" data-line-end="16">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+</code></pre>
+      </li> -->
+      <li>
+        <p class="has-line-data" data-line-start="17" data-line-end="19">
+          API: <code><span id="API">LOADING</span></code
+          ><br />
+          <br />
+          設定檔
+        </p>
+        <pre><code id="JsonTemplate" class="has-line-data"class="language-json">
+[
+
+// PCMID 1 冰箱
+  { name: '冰箱A 制冷', pcm_id: '1', dev_id: 'dev_1011' },
+  // 數值範圍0-1，單位: 0 = OFF, 1 = ON
+
+  { name: '冰箱A 冷凍庫溫度', pcm_id: '1', dev_id: 'dev_1012' },
+  // 數值範圍-50~5，單位: °C
+
+  { name: '冰箱A 微壓差', pcm_id: '1', dev_id: 'dev_1013' },
+  // 數值範圍0.01-100.99，單位: pa
+
+  { name: '冰箱B 制冷', pcm_id: '1', dev_id: 'dev_1021' },
+  // 數值範圍0-1，單位: 0 = OFF, 1 = ON
+
+  { name: '冰箱B 冷凍庫溫度', pcm_id: '1', dev_id: 'dev_1022' },
+  // 數值範圍-50~5，單位: °C
+
+  { name: '冰箱B 微壓差', pcm_id: '1', dev_id: 'dev_1023' },
+  // 數值範圍0.01-100.99，單位: pa
+
+
+// PCMID 2 包裝
+  { name: '包裝A線 啟動', pcm_id: '2', dev_id: 'dev_2011' },
+  // 數值範圍0-1，單位: 0 = OFF, 1 = ON
+
+
+// PCMID 3 倉庫
+  { name: 'A區 庫存量比例', pcm_id: '3', dev_id: 'dev_3011' },
+  // 數值範圍-0~100，單位: %
+
+  { name: 'B區 庫存量比例', pcm_id: '3', dev_id: 'dev_3021' },
+  // 數值範圍-0~100，單位: %
+
+]
+        </code></pre>
+
+        <p>
+          回應內容
+        </p>
+        <pre>
+          <code class="has-line-data language-json">
+{
+  "state": 1, // 狀態
+  "list": [
+    {
+      "dev_id": "dev_3001", // 請求的 devid
+      "count": "1", // 資料數
+      "data": [
+        {
+          "Data": "0", // 即時資料
+          "Time": "YYYY-MM-DD HH:mm:ss" // 即時資料的時間
+        }
+      ]
+    }
+  ]
+}
+          </code>
+        </pre>
+      </li>
+    </ul>
+
+    <div style="padding-top: 2em;"></div>
+    <h2 class="code-line" id="reference">
+      參考資料
+    </h2>
+    <ul style="list-style: circle;">
+      <li>
+        <a
+          target="blank"
+          href="https://github.com/facebook/react/tree/v17.0.2#react-----"
+          >React@17.0.2</a
+        >
+      </li>
+      <li>
+        <a
+          target="blank"
+          href="https://github.com/axios/axios/tree/v0.21.1#axios-api"
+          >Vue@2.6.14</a
+        >
+      </li>
+      <li>
+        <a
+          target="blank"
+          href="https://github.com/axios/axios/tree/v0.21.1#axios-api"
+          >Axios@0.21.1</a
+        >
+      </li>
+    </ul>
+
+    <div style="padding-top: 5em;"></div>
+    <!-- <button onClick="testMockingServer()">Test Mocking Server</button> -->
+    <div id="testMockingServer-console"></div>
+
+    <script>
+      let ApiPath = window.location.origin.split(".");
+      ApiPath[0] += "-3000";
+      ApiPath = ApiPath.join(".") + "/ajaxserver";
+
+      document.getElementById("API").innerHTML = ApiPath;
+
+      const testMockingServer = function () {
+        const template = [
+          // PCMID 1 冰箱
+          {
+            name: "冰箱A 制冷",
+            pcm_id: "1",
+            dev_id: "dev_1011",
+            max: 1,
+            min: 0
+          },
+          // 數值範圍0-1，單位: 0 = OFF, 1 = ON
+
+          {
+            name: "冰箱A 冷凍庫溫度",
+            pcm_id: "1",
+            dev_id: "dev_1012",
+            max: 5,
+            min: -50
+          },
+          // 數值範圍-50~5，單位: °C
+
+          {
+            name: "冰箱A 微壓差",
+            pcm_id: "1",
+            dev_id: "dev_1013",
+            min: 0.01,
+            max: 100.99
+          },
+          // 數值範圍0.01-100.99，單位: pa
+
+          {
+            name: "冰箱B 制冷",
+            pcm_id: "1",
+            dev_id: "dev_1021",
+            min: 0,
+            max: 1
+          },
+          // 數值範圍0-1，單位: 0 = OFF, 1 = ON
+
+          {
+            name: "冰箱B 冷凍庫溫度",
+            pcm_id: "1",
+            dev_id: "dev_1022",
+            min: -50,
+            max: 5
+          },
+          // 數值範圍-50~5，單位: °C
+
+          {
+            name: "冰箱B 微壓差",
+            pcm_id: "1",
+            dev_id: "dev_1023",
+            min: 0.01,
+            max: 100.99
+          },
+          // 數值範圍0.01-100.99，單位: pa
+
+          // PCMID 2 包裝
+          {
+            name: "包裝A線 啟動",
+            pcm_id: "2",
+            dev_id: "dev_2011",
+            min: 0,
+            max: 1
+          },
+          // 數值範圍0-1，單位: 0 = OFF, 1 = ON
+
+          // PCMID 3 倉庫
+          {
+            name: "A區 庫存量比例",
+            pcm_id: "3",
+            dev_id: "dev_3011",
+            min: 0,
+            max: 100
+          },
+          // 數值範圍-0~100，單位: %
+
+          {
+            name: "B區 庫存量比例",
+            pcm_id: "3",
+            dev_id: "dev_3021",
+            min: 0,
+            max: 100
+          }
+          // 數值範圍-0~100，單位: %
+        ];
+        const $el = document.getElementById("testMockingServer-console");
+
+        $el.innerHTML = "Test Start";
+
+        const getAPI = (pcmid, deviceId) => {
+          return window
+            .axios({
+              url: ApiPath,
+              method: "post",
+              data: {
+                pcm_id: pcmid,
+                dev_id: deviceId
+              }
+            })
+            .then((res) => {
+              if (res.data.state === 1) {
+                $el.innerHTML = "Mocking server is running successfully";
+              } else {
+                throw new Error(res.data.msg);
+              }
+              return [res.data.list[0].dev_id, res.data.list[0].data[0].Data];
+            })
+            .catch((ers) => {
+              $el.innerHTML =
+                "Something went wrong with mocking server \n" + ers;
+            });
+        };
+
+        let requests = template.map((e) => getAPI(e.pcm_id, e.dev_id));
+        Promise.all(requests).then((res) => {
+          let str = `
+            <table>
+              <thead>
+                <tr>
+                  <th>Device ID</th>
+                  <th>Min</th>
+                  <th>Value</th>
+                  <th>Max</th>
+                  <th>Test</th>
+                </tr>  
+              </thead>
+          `;
+          res.forEach((e, ei) => {
+            const val = Number(e[1]);
+            str += `<tr>
+              <td>${e[0]}</td>
+              <td>${template[ei].min}</td>
+              <td>${e[1]}</td>
+              <td>${template[ei].max}</td>
+              <td>
+                ${
+                  template[ei].min <= Number(e[1]) &&
+                  template[ei].max >= Number(e[1])
+                    ? "Pass"
+                    : "Failure"
+                }
+              </td>
+            </tr>`;
+          });
+          $el.innerHTML = JSON.stringify((str += "</table>")).replaceAll(
+            "\\n",
+            ""
+          );
+        });
+      };
+    </script>
+  </body>
+</html>

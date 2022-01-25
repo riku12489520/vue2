@@ -1,0 +1,11 @@
+{
+  "infiniteLoopProtection": true,
+  "hardReloadOnChange": true,
+  "view": "terminal",
+  "container": {
+    "port": 8080,
+    "node": "14"
+  },
+  "disableLogging": true,
+  "startScript": "node"
+}
