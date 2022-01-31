@@ -3,53 +3,16 @@
 		<!-- <h1>Vue App</h1> -->
 		<div class="container">
 			<div class="id1">
-				<div class="id1_a">
-					<img src="https://icon-library.com/images/freeze-icon/freeze-icon-6.jpg" alt="freeze">
-					<h2>冰箱A</h2>
-						<!-- <span>制冷: {{resultArr[0]}}</span>
-						<span>冷凍庫溫度: {{resultArr[1]}} ℃</span>
-						<span>微壓差: {{resultArr[2]}} pa</span> -->
-					<div class="item temp">
-					<span>制冷</span><span>{{resultArr[1]}}</span>
-					</div>
-					<div class="item item2"><span>冷凍庫溫度</span><span>{{resultArr[2]}} ℃</span></div>
-					<div class="item item3"><span>微壓差</span><span>{{resultArr[3]}} pa</span></div>
-					
-				</div>
-				<div class="id1_b">
-					<img src="https://icon-library.com/images/freeze-icon/freeze-icon-6.jpg" alt="freeze">
-					<h2>冰箱B</h2>
-					<!-- <span>制冷: {{resultArr[3]}}</span>
-						<span>冷凍庫溫度: {{resultArr[4]}} ℃</span>
-						<span>微壓差: {{resultArr[5]}} pa</span> -->
-					<div class="item temp">
-						<span>制冷</span><span>{{resultArr[3]}}</span>
-					</div>
-					<div class="item item2"><span>冷凍庫溫度</span><span>{{resultArr[4]}} ℃</span></div>
-					<div class="item item3"><span>微壓差</span><span>{{resultArr[5]}} pa</span></div>
-				</div>
+				<!-- <info-box v-for="item in pcmid1" :key="item" :item="item"></info-box> -->
 			</div>
 			<div class="right">
 				<div class="right-top">
 					<div class="id2">
-						<h2>包裝A線</h2>
-						<p>{{resultArr[6]}}</p>
+						<info-box v-for="item in pcmid2" :key="item" :item="item"></info-box>
 					</div>
 					<div class="id3">
-						<div class="id3_a">
-							<h2>倉庫A區</h2>
-							<div class="item stock">
-								<span>庫存量比例</span>
-								<span>{{resultArr[6]}}%</span>
-							</div>
-						</div>
-						<div class="id3_b">
-							<h2>倉庫B區</h2>
-							<div class="item stock">
-								<span>庫存量比例</span>
-								<span>{{resultArr[6]}}%</span>
-							</div>
-						</div>
+						<!-- {{store}} -->
+						<info-box v-for="item in pcmid3" :key="item" :item="item"></info-box>
 					</div>
 				</div>	
 				<div class="id4"></div>
@@ -60,49 +23,164 @@
 
 <script>
 import APIURI from '../APIURI'
-import json from '../portData'
-import portData from '../portData'
+import configData from '../configData'
+import unit from './unitId1.vue'
+import DeviceKey from '../DeviceKey'
+
 
 export default {
+	components: {
+    "info-box": unit
+  },
 	data() {
 		return {
-			pcmId: "",
-			devId: "",
-			dataArr: [],
-			resultArr : []
+			pcmid1: [],
+			pcmid2: [],
+			pcmid3: []
 		}
 	},
 	mounted: function () {
+		console.clear();
 		console.log(APIURI);
-		// console.log(portData);
-		let getdata = () => {
-			for (let i=0; i<portData.length; i++) {
-				this.devId = portData[i].dev_id;
-				this.pcmId = portData[i].pcm_id;
-				this.dataArr.push({"pcm_id":this.pcmId, "dev_id": this.devId});	
-			};
-			let lis = Array.from(this.dataArr);
-			// console.log(lis);
-			let promises = [];
-			for (let i=0; i<lis.length; i++) {
-				console.log(lis[i]);
-				promises.push(
-					axios({
-					method:	"POST",
-					url: APIURI,
-					data: lis[i],
+		// console.log(configData);
+
+		const postData = function(configData) {
+			return new Promise((resolve, reject) => {
+				let pullResults =[];
+				let posting =[];
+				configData.forEach(data => {
+					posting.push(axios({
+						method: "post",
+						url: APIURI,
+						data: data,
+					}))
+				
+				// .then(res => {
+				// 		if (typeof(res) === "object") {
+				// 			pullResults.push(res.data);
+				// 			return(pullResults);
+				// 			// resolve(res.data.list[0])
+				// 		} /*else {reject("No data");}*/
+				// 	}).then( p => console.log(p))
+				})
+				Promise.all(posting)
+					.then(re => {
+						re.forEach((e, eIndex) => {
+						let keyname = Object.keys(configData[eIndex])[3];
+							
+						if (DeviceKey.includes(keyname)) {
+							configData[eIndex][keyname] = e['data']['list'][0]['data'][0]['Data'];
+						}
 					})
-						.then( res => {
-							this.resultArr.push(res.data.list[0].data[0].Data)
-							// console.log(res.data.list[0].data[0].Data)
-						})
-						.catch( error => {console.log(error)})
-				)
-			}
-			axios.all(promises).then(() => console.log(this.resultArr));
-		};
-		getdata();
-	}	
+				})
+				// console.log(configData)
+				resolve(configData);
+		})
+	};
+	postData(configData)
+		.then(t => {
+			t.forEach(item => {
+				if (item['pcm_id'] == 1){
+					this.pcmid1.push(item)
+				} else if (item['pcm_id'] == 2){
+					this.pcmid2.push(item);
+				} else if (item['pcm_id'] == 3) {
+					this.pcmid3.push(item);
+				}
+				
+			// console.log(this.pcmid2)
+			});
+		})
+		// const InitPull = function() {
+		// 		return new Promise((resolve, reject) => {
+		// 	let list = postData(configData);
+		// 	let ar =[];
+		// 	list.then(req => {ar.push(req); return ar[0]})
+		// 	.then(arra => arra.forEach((e, eIndex) => 
+		// 					console.log(e)))
+				
+
+					
+					
+
+				
+				// 	.then(res => {
+				// 		// console.log(res);
+				// 		res.forEach((e, eIndex) => {
+				// 			console.log(eIndex);
+				// 			let keyname = Object.keys(configData[eIndex])[3];
+				// 			console.log(keyname);
+				// 			if (DeviceKey.includes(keyname)) {
+				// 				configData[eIndex][keyname] = e['data'][0]['Data'];
+				// 				resolve(res)
+				// 			} else {
+				// 				reject('No init')
+					// 		}
+					// 	})
+					// });
+
+				// Promise.all(postData(configData))
+				// 	.then(res => console.log(res))
+
+
+	// InitPull();
+	// console.log(pullResults)
+
+		// 	let  requests = idArr.map(axiosData)	// promise array
+		// 	// console.log(requests);
+		// 	return await Promise.all(requests)
+		// 		.then(function(results){
+		// 			return results
+		// 		})
+		// };
+
+		// push results in array
+		// function pushData(idArr, pushArr, ls) {
+		// 	postData(idArr)
+		// 	.then(res => {res.forEach(v => pushArr.push(v))})
+		// 	.then(re => ls[0].forEach(e => {
+		// 		ls[1] = configData.find(ob => {return ob['dev_id'] == e});
+		// 		ls[2] = pushArr.find(o =>{return o['dev_id'] == e})['data'][0];
+		// 		let store = [];
+		// 		store = ls[3].push(Object.assign(ls[1], ls[2]));	
+		// 	}))
+		// };
+		
+	
+		// this.dev_id = configData.map(v => v.dev_id);
+		// let ls = [this.dev_id, this.res_obj, this.res_dev_obj, this.store];
+		// pushData(configData, this.id3Arr, ls);
+		// console.log(this.store)
+
+		// this.dev_id.forEach(e => {
+		// 		this.res_obj = configData.find(ob => {return ob['dev_id'] == e});
+		// 		this.res_dev_obj = this.id3Arr.find(o =>{return o['dev_id'] == e});
+		// 		console.log(this.res_dev_obj);
+		// 		this.store = Object.assign(this.res_obj ,this.res_dev_obj);
+				// console.log(this.store);
+		// })
+
+		// // 用 pcmid 分類
+		// configData.forEach((e, index, array) => {
+		// 	if (e.pcm_id == 1){
+		// 		this.arr1 = this.filter(configData, 1);
+		// 	} else if (e.pcm_id == 2) {
+		// 		this.arr2 = this.filter(configData, 2);
+		// 	} else if (e.pcm_id == 3) {
+		// 		this.arr3 = this.filter(configData, 3);
+		// 	} else {}
+		// });
+
+		// let ls1=[], ls2=[], ls3=[]; 
+		// let ls = [ls1, ls2, ls3];
+		// let arrls = [this.arr1, this.arr2, this.arr3]
+		// for (let i=0; i<3; ++i) {
+		// 	pushData(arrls[i], ls[i])
+		// };
+	},
+	methods: {
+
+	}
 }
 
 </script>  
