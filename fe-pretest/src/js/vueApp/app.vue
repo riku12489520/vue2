@@ -15,7 +15,7 @@
 						<info-box v-for="item in ['stock1', 'stock2']" :key="item" :item="item" :layout="layout"></info-box>
 					</div>
 				</div>	
-				<div class="id4"></div>
+				<div class="pcmid4"></div>
 			</div>	
 		</div>
 	</div>
@@ -28,47 +28,28 @@ import unit from './unitId1.vue'
 import DeviceKey from '../DeviceKey'
 import store from '../store'
 
-
-export default {
-	components: {
-    "info-box": unit
-  },
-	data: function() {
-		return {
-			layout: store,
-			realtimelist: {},
-		}
-	},
-	beforeMount: function(){
-
-	},
-	mounted: function() {
-		console.clear();
-		console.log(APIURI);
-		// console.log(this.layout);
-		let layout = this.layout;
-		let realtimelist = this.realtimelist;
-		
-		const postData = function(portData) {
-			return new Promise((resolve) => {
-				let posting =[];
-				portData.forEach(data => {
-					let list = axios({
-						method: "post",
-						url: APIURI,
-						data: data,
-					});
-					posting.push(list)
+const postData = function(portData) {
+				return new Promise((resolve) => {
+					let posting =[];
+					portData.forEach(data => {
+						let list = axios({
+							method: "post",
+							url: APIURI,
+							data: data,
+							timeout: 5 * 1000,
+						});
+						posting.push(list)
+					})
+					resolve(posting)
 				})
-				resolve(posting)
-			})
 		}
 
 		const classdData = function(item) {
 			return new Promise(async function (resolve, reject) {
 				let list = await postData(portData);
 					Promise.all(list).then(re => {
-						let layoutItem = layout[item];
+						let storelayout = store;
+						let layoutItem = storelayout[item];
 						let keyname = Object.keys(layoutItem);
 						re.forEach(e => {
 							keyname.forEach(keye => {
@@ -77,14 +58,45 @@ export default {
 								}
 							})
 						});	
-						resolve(layout);
+						if (layoutItem['pack'] == "0") {
+							layoutItem['pack'] ="Off"
+						} else if (layoutItem['pack'] == "1") {
+							layoutItem['pack'] ="On"}
+						if (layoutItem['freeze'] == "0") {
+								layoutItem['freeze'] = "Off"
+						} else if (layoutItem['freeze'] == "1") {
+							layoutItem['freeze'] = "On"}
+						
+						resolve(storelayout);
 					}).catch(error => reject(error))
 			})
 		}
-		let names = ["refrigeratorA", "refrigeratorB", "packA", "stock1", "stock2"];
+
+export default {
+	components: {
+    "info-box": unit
+  },
+	data: function() {
+		return {
+			layout: {},
+			realtimelist: {},
+		}
+	},
+	beforeMount: function(){
+		this.layout = store;
+		this.realtimelist = "";
+		let names = Object.keys(store);
 
 		names.forEach(n => classdData(n));
-		console.log(layout)
+		
+	},
+	mounted: function() {
+		console.clear();
+		console.log(APIURI);
+		console.log(this.layout["refrigeratorA"])
+		
+		
+		
 	},
 	methods: {
 
@@ -158,6 +170,7 @@ html, body{
 		@extend %box;
 		flex: 1 0 33%;
 		display: flex;
+		align-items: stretch;
 		flex-direction: column;
 		.group {
 		@extend %inner-box;
