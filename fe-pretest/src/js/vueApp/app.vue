@@ -2,57 +2,21 @@
 	<div class="vue-app">
 		<!-- <h1>Vue App</h1> -->
 		<div class="container">
-			<div class="id1">
-				<div class="id1_a">
-					<img src="https://icon-library.com/images/freeze-icon/freeze-icon-6.jpg" alt="freeze">
-					<h2>冰箱A</h2>
-						<!-- <span>制冷: {{resultArr[0]}}</span>
-						<span>冷凍庫溫度: {{resultArr[1]}} ℃</span>
-						<span>微壓差: {{resultArr[2]}} pa</span> -->
-					<div class="item temp">
-					<span>制冷</span><span>{{resultArr[1]}}</span>
-					</div>
-					<div class="item item2"><span>冷凍庫溫度</span><span>{{resultArr[2]}} ℃</span></div>
-					<div class="item item3"><span>微壓差</span><span>{{resultArr[3]}} pa</span></div>
-					
-				</div>
-				<div class="id1_b">
-					<img src="https://icon-library.com/images/freeze-icon/freeze-icon-6.jpg" alt="freeze">
-					<h2>冰箱B</h2>
-					<!-- <span>制冷: {{resultArr[3]}}</span>
-						<span>冷凍庫溫度: {{resultArr[4]}} ℃</span>
-						<span>微壓差: {{resultArr[5]}} pa</span> -->
-					<div class="item temp">
-						<span>制冷</span><span>{{resultArr[3]}}</span>
-					</div>
-					<div class="item item2"><span>冷凍庫溫度</span><span>{{resultArr[4]}} ℃</span></div>
-					<div class="item item3"><span>微壓差</span><span>{{resultArr[5]}} pa</span></div>
-				</div>
+			<div class="pcmid1">
+				<info-box v-for="item in ['refrigeratorA','refrigeratorB']" :key="item" :item="item" :layout="layout"></info-box>
 			</div>
 			<div class="right">
 				<div class="right-top">
-					<div class="id2">
-						<h2>包裝A線</h2>
-						<p>{{resultArr[6]}}</p>
+					<div class="pcmid2">
+						<info-box v-for="item in ['packA']" :key="item" :item="item" :layout="layout"></info-box>
 					</div>
-					<div class="id3">
-						<div class="id3_a">
-							<h2>倉庫A區</h2>
-							<div class="item stock">
-								<span>庫存量比例</span>
-								<span>{{resultArr[6]}}%</span>
-							</div>
-						</div>
-						<div class="id3_b">
-							<h2>倉庫B區</h2>
-							<div class="item stock">
-								<span>庫存量比例</span>
-								<span>{{resultArr[6]}}%</span>
-							</div>
-						</div>
+					<div class="pcmid3">
+						<info-box v-for="item in ['stock1', 'stock2']" :key="item" :item="item" :layout="layout"></info-box>
 					</div>
 				</div>	
-				<div class="id4"></div>
+				<div class="pcmid4">
+					<!-- {{this.realtimelist}} -->
+				</div>
 			</div>	
 		</div>
 	</div>
@@ -60,49 +24,106 @@
 
 <script>
 import APIURI from '../APIURI'
-import json from '../portData'
-import portData from '../portData'
+import postConfigData from '../postConfigData'
+import unit from './unitId1.vue'
+import DeviceKey from '../DeviceKey'
+import board from '../board'
+
+const postData = function(postConfigData) {
+	return new Promise((resolve, reject) => {
+		let posting =[];
+		postConfigData.forEach(data => {
+			let p = axios({
+				method: "post",
+				url: APIURI,
+				data: data,
+				timeout: 5 * 1000,
+			})
+			.catch(err => reject(err))
+			posting.push(p);
+		})
+		resolve(posting)
+	})
+}
+
+const getLayoutData = function(items) {
+	return new Promise(async function (resolve, reject) {
+		let list = await postData(postConfigData);
+			Promise.all(list).then(re => {
+				let boardlayout = Object.assign({}, board);
+				items.forEach(item => {
+					let keynames = Object.keys(boardlayout[item]);
+					re.forEach(e => {
+						keynames.forEach(key => {
+							if (board[item][key] == e['data']['list'][0]['dev_id']) {
+								// console.log(key+ '=' + board[item][key] + ', config val=' +  e['data']['list'][0]['dev_id'])
+								boardlayout[item] = {...boardlayout[item], [key]:e['data']['list'][0]['data'][0]['Data']}
+							}
+							if (key == 'pack' || 'freeze') {
+								let listname = boardlayout[item];
+								if (listname[key] == "0") {
+									listname[key] ="Off"
+								} else if (listname[key ] == "1") {
+									listname[key] ="On"};
+							}
+						})
+					})
+				})
+					// console.log(boardlayout);
+					// console.log(board);
+				resolve(boardlayout);
+			}).catch(error => reject(error))	
+	})
+}
+
+const checkdata = function(layout, defaultVal = 'Loading') {
+		Object.keys(layout).forEach(storekey => {	// storekey = 'packA'
+			const itemtable = layout[storekey];
+			Object.keys(itemtable).forEach(key => {	// key = 'pack'
+				const vaildkey = [].concat(DeviceKey);
+				if (vaildkey.includes(key)) {
+					const deviceid = itemtable[key];
+					if (deviceid.includes('dev_')) {
+						layout[storekey] = { ...layout[storekey], [key]:defaultVal}
+					}
+				}
+			})
+		})
+	return layout
+}
 
 export default {
-	data() {
+	components: {
+    "info-box": unit
+  },
+	data: function() {
 		return {
-			pcmId: "",
-			devId: "",
-			dataArr: [],
-			resultArr : []
+			layout: {},
+			realtimelist: {},
 		}
 	},
-	mounted: function () {
+	beforeMount: function(){
+		this.layout = Object.assign({}, board);
+		this.realtimelist = checkdata(this.layout, 'Loading');
+		
+	},
+	mounted: function() {
+		console.clear();
 		console.log(APIURI);
-		// console.log(portData);
-		let getdata = () => {
-			for (let i=0; i<portData.length; i++) {
-				this.devId = portData[i].dev_id;
-				this.pcmId = portData[i].pcm_id;
-				this.dataArr.push({"pcm_id":this.pcmId, "dev_id": this.devId});	
-			};
-			let lis = Array.from(this.dataArr);
-			// console.log(lis);
-			let promises = [];
-			for (let i=0; i<lis.length; i++) {
-				console.log(lis[i]);
-				promises.push(
-					axios({
-					method:	"POST",
-					url: APIURI,
-					data: lis[i],
-					})
-						.then( res => {
-							this.resultArr.push(res.data.list[0].data[0].Data)
-							// console.log(res.data.list[0].data[0].Data)
-						})
-						.catch( error => {console.log(error)})
-				)
-			}
-			axios.all(promises).then(() => console.log(this.resultArr));
-		};
-		getdata();
-	}	
+		// console.log(this.realtimelist['refrigeratorB']);
+		let names = Object.keys(board);
+		getLayoutData(names)
+			.then(res => {
+				this.layout = Object.assign({}, res)
+			})
+		
+		setInterval(() => {    
+			getLayoutData(names).then(res => {this.layout = Object.assign({}, res)})
+		}, 10 * 1000); 
+	},
+	methods: {
+		
+	}
 }
 
 </script>  
@@ -111,103 +132,100 @@ export default {
 html, body{
 	height: 100%;
 	span{
-		font-size: 28px;
+		font-size: 30px;
 	}
 }
-.vue-app {
-	height: 100%;
-	width: 100%;
-	h1 {
-		display: inline-block;
-		color: teal;
-		border: 1px solid teal;
-		padding: 0.3em 0.5em;
-		background: orange;
-	}
-}
+// .vue-app {
+// 	height: 100%;
+// 	width: 100%;
+// 	h1 {
+// 		display: inline-block;
+// 		color: teal;
+// 		border: 1px solid teal;
+// 		padding: 0.3em 0.5em;
+// 		background: orange;
+// 	}
+// }
 %box {
-	border: 1px solid rgb(61, 61, 61);
+	height: 100%;
+	display: flex;
+	flex-direction: column;
 	border-radius: 20px;
-	background: #3399ff;
-	margin: 5px;
+	// background: #3399ff;
 	padding: 5px;
 	box-sizing: border-box;
 }
-%inner-box{
+%inner-box {
 	flex: 1;
 	margin: 2.5px;
+	margin-bottom: 15px;
 	padding: 5px;
 	border-radius: 20px;
 	background: #9ed8e2;
 }
-%item{
-	padding: 10px;
-	margin: 10px;
-	background: #fff;
-	border-radius: 10px;
-	display: flex;
-	justify-content: space-between;
-}
 %term{
 	text-align: center;
-	img{
+	img {
 		height: 20%;
 		text-align: center;
 		margin-bottom: 10px;
-		}
-	h2{
+	}
+	h2 {
 		font-size: 2rem;
 		margin-bottom: 10px;
 	}
-	.item{
-		@extend %item;
+	.listname {
+		margin: 1.5rem;
+		text-align: center;
+	}
+	.item {
+		padding: 1.5rem;
+		margin: 1rem;
+		background: #fff;
+		border-radius: 10px;
+		display: flex;
+		justify-content: space-between;
 	}
 }
 .container {
-	height: 100%;
+	height: 100vh;
 	width: 100%;
 	display: flex;
 	flex-wrap: wrap;
 	flex-direction: row;
-	.id1 {
-		@extend %box;
-		flex: 1 0 33%;
-		display: flex;
-		flex-direction: column;
-		.id1_a, .id1_b{
-			@extend %inner-box;
-			@extend %term;
-		}
+	.group {
+		@extend %inner-box;
+		@extend %term;
 	}
-	.right{
-		flex: 1 0 66%;
+}	
+.pcmid1 {
+	@extend %box;
+	flex: 1 0 33%;
+}
+.right {
+	flex: 1 0 66%;
+	display: flex;
+	flex-direction: column;
+	.right-top {
 		display: flex;
-		flex-direction: column;
-		.right-top{
-			display: flex;
-			flex: 1 1 60%;
-			flex-wrap: wrap;
-			flex-direction: row;
-			.id2 {
+		flex: 1 1 60%;
+		flex-wrap: wrap;
+		flex-direction: row;
+		.pcmid2 {
 			@extend %box;
 			flex: 1 1 48%;
-			}
-			.id3 {
-				@extend .id2;
-				display: flex;
-				flex-direction: column;
-				.id3_a, .id3_b{
-					text-align: center;
-					@extend %inner-box;
-					@extend %term;
-				}
-			}
 		}
-		.id4 {
-				@extend %box;
-				flex: 1;
-				height: 32.4%;
-			}
+		.pcmid3 {
+			@extend %box;
+			flex: 1 1 48%;
+		}
 	}
+}	
+.pcmid4 {
+	@extend %box;
+	border: 1px solid #9ed8e2;
+	margin: 0 5px;
+	flex: 1;
+	height: 32.4%;
 }
 </style>
