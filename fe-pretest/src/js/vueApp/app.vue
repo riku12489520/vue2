@@ -119,7 +119,7 @@ export default {
 		
 		setInterval(() => {    
 			getLayoutData(names).then(res => {this.layout = Object.assign({}, res)})
-		}, 10 * 1000); 
+		}, 5 * 1000); 
 	},
 	methods: {
 		
