@@ -129,10 +129,10 @@ export default {
 </script>  
 
 <style lang="scss">
-html, body{
+html, body {
 	height: 100%;
-	span{
-		font-size: 30px;
+	span {
+		font-size: 36px;
 	}
 }
 // .vue-app {
@@ -171,15 +171,16 @@ html, body{
 		margin-bottom: 10px;
 	}
 	h2 {
-		font-size: 2rem;
+		font-size: 3rem;
 		margin-bottom: 10px;
+		padding: 0.75rem;
 	}
 	.listname {
 		margin: 1.5rem;
 		text-align: center;
 	}
 	.item {
-		padding: 1.5rem;
+		padding: 1.75rem;
 		margin: 1rem;
 		background: #fff;
 		border-radius: 10px;
